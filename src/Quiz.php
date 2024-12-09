@@ -5,22 +5,27 @@ namespace App;
 class Quiz
 {
     protected array $questions;
-    protected bool $isUsedSameScore;
+    protected ?int $commonScore = null;
 
-    //TODO:: implement next step
-    // public function __construct(
-    //     protected string $name,
-    //     Question $question,
-    //     protected bool $isUsedSameScore = false
-    // )
-    // {
-    //     $this->questions[] = $question;
-    // }
+    public function __construct(
+        protected string $name,
+        Question $question,
+        protected bool $isUsedSameScore = false
+    ) {
+        if ($isUsedSameScore) {
+            $this->commonScore = $question->getScore();
+        }
 
-    public function addQuestion(Question $question, bool $isUsedSameScore = false): void
-    {
         $this->questions[] = $question;
-        $this->isUsedSameScore = $isUsedSameScore;
+    }
+
+    public function addQuestion(Question $question): void
+    {
+        if ($this->isUsedSameScore && $this->commonScore) {
+            $question = new Question($question->getBody(), $question->getSolution(), $this->commonScore);
+        }
+
+        $this->questions[] = $question;
     }
 
     public function getQuestions(): array
@@ -40,8 +45,8 @@ class Quiz
     public function calculateTotalScore(): int
     {
         return array_reduce(
-            $this->questions, 
-            fn($totalScore, $question) => $totalScore += $question->getScore(), 
+            $this->questions,
+            fn($totalScore, $question) => $totalScore += $question->getScore(),
             0
         );
     }
