@@ -4,28 +4,43 @@ namespace App;
 
 class Question
 {
-    protected mixed $answer;
+    protected string $answer;
 
     public function __construct(
-        protected string $body, 
-        protected mixed $solution,
-        protected int $score
+        protected string $body,
+        protected string $solution,
+        protected ?int $score = null
     ) {}
 
-    public function answer(mixed $answer): void
+    public function getBody(): string
     {
-        $this->answer = $answer;
+        return $this->body;
     }
 
-    public function isCorrect(): bool
+    public function getSolution(): string
     {
-        if(!isset($this->answer)) return false;
+        return $this->solution;
+    }
 
-        return  $this->solution === $this->answer;
+    public function getAnswer(): string
+    {
+        return $this->answer;
+    }
+
+    public function setAnswer(string $answer): void
+    {
+        $this->answer = $answer;
     }
 
     public function getScore(): int
     {
         return $this->score;
+    }
+
+    public function isCorrect(): bool
+    {
+        if (!isset($this->answer)) return false;
+
+        return  $this->solution === $this->answer;
     }
 }
