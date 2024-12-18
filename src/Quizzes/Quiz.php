@@ -2,7 +2,7 @@
 
 namespace App\Quizzes;
 
-use App\Questions\Contracts\Question;
+use App\Questions\Question;
 use App\Quizzes\Builders\QuizBuilder;
 
 class Quiz

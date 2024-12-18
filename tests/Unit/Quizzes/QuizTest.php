@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 
-use App\Questions\Contracts\Question;
+use App\Questions\Question;
 use App\Questions\MultipleChoiceQuestion;
 use App\Questions\SingleChoiceQuestion;
 use App\Quizzes\Quiz;

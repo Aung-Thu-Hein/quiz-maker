@@ -14,13 +14,13 @@ class MultipleChoiceQuestionTest extends TestCase
     {
         $question = MultipleChoiceQuestion::make()
             ->setBody("Multiple choice question 1")
-            ->setOptionsAndSolutions(['1', '2', '3', '4', '5'], ['2', '4'])
+            ->setOptionsAndSolution(['1', '2', '3', '4', '5'], ['2', '4'])
             ->setScore(2)
             ->create();
 
         $body = $question->getBody();
         $options = $question->getOptions();
-        $solutions = $question->getSolutions();
+        $solutions = $question->getSolution();
 
         $this->assertNotEmpty($body);
         $this->assertNotEmpty($solutions);

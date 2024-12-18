@@ -4,20 +4,12 @@ namespace App\Questions\Builders;
 
 use App\Questions\SingleChoiceQuestion;
 
-class SingleChoiceQuestionBuilder extends SingleChoiceQuestion
+class SingleChoiceQuestionBuilder extends QuestionBuilder
 {
-    protected string $body;
     protected string $solution;
     protected array $options;
-    protected int $score;
 
-    public function setBody(string $body): self
-    {
-        $this->body = $body;
-        return $this;
-    }
-
-    public function setOptionsAndSolution(array $options, string $solution): self
+    public function setOptionsAndSolution(array $options, mixed $solution): self
     {
         $this->options = $options;
 
@@ -29,19 +21,13 @@ class SingleChoiceQuestionBuilder extends SingleChoiceQuestion
         return $this;
     }
 
-    public function setScore(int $score): self
-    {
-        $this->score = $score;
-        return $this;
-    }
-
     public function create(): SingleChoiceQuestion
     {
         $question = new SingleChoiceQuestion();
-        $question->body = $this->body;
-        $question->solution = $this->solution;
-        $question->options = $this->options;
-        $question->score = $this->score;
+        $question->setBody($this->body);
+        $question->setSolution($this->solution);
+        $question->setOptions($this->options);
+        $question->setScore($this->score);
 
         return $question;
     }
