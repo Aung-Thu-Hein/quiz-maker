@@ -4,20 +4,12 @@ namespace App\Questions\Builders;
 
 use App\Questions\MultipleChoiceQuestion;
 
-class MultipleChoiceQuestionBuilder extends MultipleChoiceQuestion
+class MultipleChoiceQuestionBuilder extends QuestionBuilder
 {
-    protected string $body;
     protected array $options;
     protected array $solutions;
-    protected int $score;
 
-    public function setBody(string $body): self
-    {
-        $this->body = $body;
-        return $this;
-    }
-
-    public function setOptionsAndSolutions(array $options, array $solutions): self
+    public function setOptionsAndSolution(array $options, mixed $solutions): self
     {
         $this->options = $options;
 
@@ -29,19 +21,13 @@ class MultipleChoiceQuestionBuilder extends MultipleChoiceQuestion
         return $this;
     }
 
-    public function setScore(int $score): self
-    {
-        $this->score = $score;
-        return $this;
-    }
-
     public function create(): MultipleChoiceQuestion
     {
         $question = new MultipleChoiceQuestion();
-        $question->body = $this->body;
-        $question->solutions = $this->solutions;
-        $question->options = $this->options;
-        $question->score = $this->score;
+        $question->setBody($this->body);
+        $question->setSolution($this->solutions);
+        $question->setOptions($this->options);
+        $question->setScore($this->score);
 
         return $question;
     }
