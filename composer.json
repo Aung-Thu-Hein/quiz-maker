@@ -19,5 +19,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^11"
+    },
+    "require": {
+        "psr/container": "^2.0"
     }
 }
