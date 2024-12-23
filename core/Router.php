@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use App\Exceptions\RouteNotFoundException;
+use Core\Exceptions\RouteNotFoundException;
 
 class Router
 {
