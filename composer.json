@@ -21,6 +21,7 @@
         "phpunit/phpunit": "^11"
     },
     "require": {
-        "psr/container": "^2.0"
+        "psr/container": "^2.0",
+        "vlucas/phpdotenv": "^5.6"
     }
 }
