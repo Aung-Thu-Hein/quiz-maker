@@ -71,6 +71,7 @@ class Container implements ContainerInterface
                     );
                 }
 
+                //Return the resolvable instance
                 if($type instanceof \ReflectionNamedType && !$type->isBuiltin()) {
                     return $this->get($type->getName());
                 }
