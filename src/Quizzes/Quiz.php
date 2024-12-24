@@ -42,6 +42,11 @@ class Quiz
         $this->questions[] = $question;
     }
 
+    public function addQuestions(array $questions): void
+    {
+        $this->questions = $questions;
+    }
+
     //TODO:: no use, later modify logic
     public function calculateUserScore(): int
     {
