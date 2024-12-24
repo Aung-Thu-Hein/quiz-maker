@@ -34,9 +34,10 @@ class QuizTest extends TestCase
         $this->quiz = Quiz::make()
             ->setName("Math Quiz")
             ->setQuestionType($questionType)
-            ->setQuestion($this->singleChoiceQues)
             ->setIsUsedSameScore(true)
             ->create();
+
+        $this->quiz->addQuestion($this->singleChoiceQues);
     }
 
     #[Test]
@@ -69,11 +70,10 @@ class QuizTest extends TestCase
         $quiz = Quiz::make()
             ->setName("Math Quiz")
             ->setQuestionType($questionType)
-            ->setQuestion($questions[0])
             ->setIsUsedSameScore(false)
             ->create();
 
-        for ($i = 1, $length = count($questions); $i < $length; $i++) {
+        for ($i = 0, $length = count($questions); $i < $length; $i++) {
             $quiz->addQuestion($questions[$i]);
         }
 
