@@ -4,12 +4,16 @@ use Core\App;
 use Core\Container;
 use Core\Router;
 use Core\DB;
+use Dotenv\Dotenv;
 
 const BASE_PATH = __DIR__ . '/../';
 
 require BASE_PATH . 'core/Functions.php';
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+$dotEnv = Dotenv::createImmutable(BASE_PATH);
+$dotEnv->load();
 
 $container = new Container();
 $router = new Router($container);
