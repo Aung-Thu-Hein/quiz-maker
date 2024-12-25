@@ -24,5 +24,8 @@ $container->set(DB::class, function() {
 
 require BASE_PATH . 'routes/route.php';
 
-$app = new App(['uri' => $_SERVER['REQUEST_URI'], 'method' => $_SERVER['REQUEST_METHOD']], $router);
+$app = new App(
+    $container,
+    ['uri' => $_SERVER['REQUEST_URI'], 'method' => $_SERVER['REQUEST_METHOD']], 
+    $router);
 $app->run();

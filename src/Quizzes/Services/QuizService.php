@@ -3,10 +3,23 @@
 namespace App\Quizzes\Services;
 
 use App\Questions\Question;
+use App\Quizzes\Contracts\QuizServiceInterface;
+use App\Quizzes\DAOs\QuizDao;
 use App\Quizzes\Quiz;
 
-class QuizService
+class QuizService implements QuizServiceInterface
 {
+
+    public function __construct(protected QuizDao $quizDao)
+    {
+        //
+    }
+
+    public function getAllQuizzes()
+    {
+        return $this->quizDao->all();
+    }
+
     public function create(Question $question, array $requests): Quiz
     {
         $quiz = Quiz::make()

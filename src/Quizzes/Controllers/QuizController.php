@@ -13,6 +13,15 @@ class QuizController
         protected QuestionService $questionService
     ) {}
 
+    public function index()
+    {
+        $quizzes = $this->quizService->getAllQuizzes();
+
+        echo "<pre>";
+        var_dump($quizzes);
+        echo "</pre>";
+    }
+
     public function store()
     {
         //Requests from front-end
