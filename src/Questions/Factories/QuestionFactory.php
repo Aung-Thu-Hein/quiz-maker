@@ -4,11 +4,12 @@ namespace App\Questions\Factories;
 
 use App\Enums\QuestionType;
 use App\Questions\MultipleChoiceQuestion;
+use App\Questions\Question;
 use App\Questions\SingleChoiceQuestion;
 
 class QuestionFactory
 {
-    public static function create(int $questionType)
+    public static function create(int $questionType): Question
     {
         return match($questionType) {
             QuestionType::SINGLE_CHOICE->value => new SingleChoiceQuestion(),

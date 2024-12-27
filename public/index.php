@@ -8,7 +8,7 @@ use Dotenv\Dotenv;
 
 const BASE_PATH = __DIR__ . '/../';
 
-require BASE_PATH . 'core/Functions.php';
+require BASE_PATH . 'core/functions.php';
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
