@@ -1,1 +1,4 @@
-name: test
+name: Run Tests
+
+on:
+  
