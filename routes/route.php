@@ -3,7 +3,7 @@
 use App\Quizzes\Controllers\QuizController;
 
 $router->get('/', function() {
-    echo "Default route";
+    echo "Automate CI test";
 });
 
 $router->get('/quiz', [QuizController::class, 'index']);
