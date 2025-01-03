@@ -27,7 +27,7 @@ class App
         } catch(RouteNotFoundException) {
             http_response_code(404);
 
-            echo "Route Not Found!......";
+            echo "404 Not Found";
         }
     }
 }
