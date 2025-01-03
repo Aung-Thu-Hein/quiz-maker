@@ -9,15 +9,34 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
 
+    env:
+      PHP_VERSION: '8.3'
+      PHP_EXTENSIONS:  dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, igbinary, msgpack, lzf, zstd, lz4, memcached, gmp, :php-psr
+
     steps:
       - name: Checkout Branch
         uses: actions/checkout@v4
 
+      - name: Setup PHP and Composer Cache Environment
+        id: extcache
+        uses: shivammathur/cache-extensions@v1
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          key: extension-cache-v1
+
+      - name: Cache Extensions
+        uses: actions/cache@v4.2.0
+        with:
+          path: ${{ steps.extcache.outputs.dir }}
+          key: ${{ steps.extcache.outputs.key }}
+          restore-keys: ${{ steps.extcache.outputs.key }}
+
       - name: Setup PHP and Composer
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd, redis, igbinary, msgpack, lzf, zstd, lz4, memcached, gmp, :php-psr
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
           tools: composer:v2
 
       - name: Get Composer Cache Dir
