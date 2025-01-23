@@ -1,6 +1,10 @@
-# Quiz Maker
- A PHP-based quiz maker, that generate list of question, track the user answer and give out the result.
+# Learn by Building
 
- ## Features
- - Generating custom quiz
- - API endpoint for quizzes and scroll submission
+This repository is intended for the developers who want to learn core backend concepts by building app from scratch. The app is "Quiz Maker" app that generate quiz and give out the result. In this app, you can learn the following concepts
+
+- Unit Testing
+- Service Container
+- Docker
+- CI/CD using GitHubt Action
+- Some OOP design pattern like DI, Factory and Builder patterns.
+- Clear structure of project.
