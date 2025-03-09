@@ -14,5 +14,6 @@ CREATE TABLE questions(
     body MEDIUMTEXT NOT NULL,
     options JSON NOT NULL,
     solution JSON NOT NULL,
-    score DECIMAL(4, 2) UNSIGNED NOT NULL
+    score DECIMAL(4, 2) UNSIGNED NOT NULL,
+    FOREIGN KEY (quiz_id) REFERENCES quizzes(id) ON DELETE CASCADE
 );
