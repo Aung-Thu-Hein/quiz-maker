@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Quizzes\Contracts;
+namespace App\Questions\Contracts;
 
 use Core\DB;
 
-interface QuizDaoInterface
+interface QuestionDaoInterface
 {
     public function create(array $data): DB;
 }

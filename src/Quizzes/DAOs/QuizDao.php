@@ -13,10 +13,9 @@ class QuizDao implements QuizDaoInterface
         //
     }
 
-    public function all()
+    public function create(array $data): DB
     {
-        $query = 'SELECT * FROM products';
-        $stmt = $this->db->query($query);
-        return $stmt->fetchAll();
+        $query = 'INSERT INTO quizzes (name, is_used_same_score, question_type) VALUES (:name, :is_used_same_score, :question_type)';
+        return $this->db->run($query, $data);
     }
 }

@@ -2,6 +2,10 @@
 
 namespace Core;
 
+use App\Questions\Contracts\QuestionDaoInterface;
+use App\Questions\Contracts\QuestionServiceInterface;
+use App\Questions\DAOs\QuestionDao;
+use App\Questions\Services\QuestionService;
 use Core\Exceptions\RouteNotFoundException;
 
 use App\Quizzes\Contracts\QuizDaoInterface;
@@ -18,6 +22,8 @@ class App
     ){
         $container->set(QuizServiceInterface::class, QuizService::class);
         $container->set(QuizDaoInterface::class, QuizDao::class);
+        $container->set(QuestionServiceInterface::class, QuestionService::class);
+        $container->set(QuestionDaoInterface::class, QuestionDao::class);
     }
 
     public function run(): void

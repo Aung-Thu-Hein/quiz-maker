@@ -34,4 +34,12 @@ class DB
     {
         return call_user_func_array([$this->pdo, $name], $arguments);
     }
+
+    public function run(string $query, array $params = []): self
+    {
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+
+        return $this;
+    }
 }
