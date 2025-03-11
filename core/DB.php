@@ -4,10 +4,12 @@ namespace Core;
 
 use PDO;
 use PDOException;
+use PDOStatement;
 
 class DB
 {
     private PDO $pdo;
+    private PDOStatement $stmt;
 
     public function __construct()
     {
@@ -37,9 +39,26 @@ class DB
 
     public function run(string $query, array $params = []): self
     {
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute($params);
+        $this->stmt = $this->pdo->prepare($query);
+        $this->stmt->execute($params);
 
         return $this;
+    }
+
+    public function find(): array
+    {
+        return $this->stmt->fetch();
+    }
+
+    public function all(): array
+    {
+        return $this->stmt->fetchAll();
+    }
+
+    public function delete(string $query, array $params = []): int
+    {
+        $this->stmt = $this->pdo->prepare($query);
+        $this->stmt->execute($params);
+        return $this->stmt->rowCount();
     }
 }
