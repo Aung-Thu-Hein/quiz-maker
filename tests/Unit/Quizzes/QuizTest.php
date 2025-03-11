@@ -19,10 +19,10 @@ class QuizTest extends TestCase
 
     protected function setUp(): void
     {
-        $questionType = QuestionType::SINGLE_CHOICE->value;
+        $questionType = QuestionType::SINGLE_CHOICE;
         $question = match ($questionType) {
-            QuestionType::SINGLE_CHOICE->value => new SingleChoiceQuestion(),
-            QuestionType::MULTIPLE_CHOICE->value => new MultipleChoiceQuestion()
+            QuestionType::SINGLE_CHOICE => new SingleChoiceQuestion(),
+            QuestionType::MULTIPLE_CHOICE => new MultipleChoiceQuestion()
         };
 
         $this->singleChoiceQues = $question::make()
@@ -66,7 +66,7 @@ class QuizTest extends TestCase
     #[DataProvider('scoreProvider')]
     public function it_calculates_user_score_and_total_score(array $questions, array $answers, int $expectedUserScore, int $expectedTotalScore)
     {
-        $questionType = QuestionType::SINGLE_CHOICE->value;
+        $questionType = QuestionType::SINGLE_CHOICE;
         $quiz = Quiz::make()
             ->setName("Math Quiz")
             ->setQuestionType($questionType)

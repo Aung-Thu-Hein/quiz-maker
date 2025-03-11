@@ -6,7 +6,7 @@ abstract class Question
 {
     protected string $body;
     protected array $options;
-    protected mixed $solution;
+    protected array|string $solution;
     protected int $score;
 
     abstract public function checkAnswer(mixed $answer): bool;
@@ -21,7 +21,7 @@ abstract class Question
         return $this->options;
     }
 
-    public function getSolution(): mixed
+    public function getSolution(): array|string
     {
         return $this->solution;
     }
@@ -41,7 +41,7 @@ abstract class Question
         $this->options = $options;
     }
 
-    public function setSolution(mixed $solution): void
+    public function setSolution(array|string $solution): void
     {
         $this->solution = $solution;
     }

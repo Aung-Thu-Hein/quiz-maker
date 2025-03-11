@@ -2,13 +2,13 @@
 
 namespace App\Quizzes\Builders;
 
-use App\Questions\Question;
+use App\Enums\QuestionType;
 use App\Quizzes\Quiz;
 
 class QuizBuilder extends Quiz
 {
     protected string $name;
-    protected int $questionType;
+    protected QuestionType $questionType;
     protected bool $isUsedSameScore = false;
 
     public function setName(string $name): self
@@ -17,7 +17,7 @@ class QuizBuilder extends Quiz
         return $this;
     }
 
-    public function setQuestionType(int $questionType): self
+    public function setQuestionType(QuestionType $questionType): self
     {
         $this->questionType = $questionType;
         return $this;

@@ -9,11 +9,11 @@ use App\Questions\SingleChoiceQuestion;
 
 class QuestionFactory
 {
-    public static function create(int $questionType): Question
+    public static function create(QuestionType $questionType): Question
     {
         return match($questionType) {
-            QuestionType::SINGLE_CHOICE->value => new SingleChoiceQuestion(),
-            QuestionType::MULTIPLE_CHOICE->value => new MultipleChoiceQuestion(),
+            QuestionType::SINGLE_CHOICE => new SingleChoiceQuestion(),
+            QuestionType::MULTIPLE_CHOICE => new MultipleChoiceQuestion(),
             default => throw new \InvalidArgumentException("Cannot create question, due to invalid question type")
         };
     }

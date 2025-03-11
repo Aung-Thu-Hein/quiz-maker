@@ -2,6 +2,7 @@
 
 namespace App\Quizzes;
 
+use App\Enums\QuestionType;
 use App\Questions\Question;
 use App\Quizzes\Builders\QuizBuilder;
 
@@ -10,7 +11,7 @@ class Quiz
     protected string $name;
     protected array $questions;
     protected bool $isUsedSameScore;
-    protected int $questionType;
+    protected QuestionType $questionType;
 
     public function getName(): string
     {
@@ -27,7 +28,7 @@ class Quiz
         return $this->isUsedSameScore;
     }
 
-    public function getQuestionType(): int
+    public function getQuestionType(): QuestionType
     {
         return $this->questionType;
     }
