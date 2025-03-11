@@ -32,17 +32,17 @@ class Router
 
     public function put(string $route, callable|array $action): self
     {
-        return $this->put('put', $route, $action);
+        return $this->register('put', $route, $action);
     }
 
     public function patch(string $route, callable|array $action): self
     {
-        return $this->patch('patch', $route, $action);
+        return $this->register('patch', $route, $action);
     }
 
     public function delete(string $route, callable|array $action): self
     {
-        return $this->delete('delete', $route, $action);
+        return $this->register('delete', $route, $action);
     }
 
     public function resolve(string $requestMethod)
