@@ -17,7 +17,6 @@ class App
 {
     public function __construct(
         protected Container $container,
-        protected array $request, 
         protected Router $router
     ){
         $container->set(QuizServiceInterface::class, QuizService::class);
@@ -29,7 +28,7 @@ class App
     public function run(): void
     {
         try {
-            echo $this->router->resolve(strtolower($this->request['method']));
+            echo $this->router->resolve();
         } catch(RouteNotFoundException) {
             http_response_code(404);
 

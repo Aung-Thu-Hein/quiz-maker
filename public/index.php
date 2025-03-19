@@ -4,6 +4,7 @@ use Core\App;
 use Core\Container;
 use Core\Router;
 use Core\DB;
+use Core\Request;
 use Dotenv\Dotenv;
 
 const BASE_PATH = __DIR__ . '/../';
@@ -22,10 +23,11 @@ $container->set(DB::class, function() {
     return new DB();
 });
 
+$container->set(Request::class, function() {
+    return new Request();
+});
+
 require BASE_PATH . 'routes/route.php';
 
-$app = new App(
-    $container,
-    ['uri' => $_SERVER['REQUEST_URI'], 'method' => $_SERVER['REQUEST_METHOD']], 
-    $router);
+$app = new App($container, $router);
 $app->run();

@@ -7,10 +7,11 @@ use Core\Exceptions\RouteNotFoundException;
 class Router
 {
     private array $routes = [];
+    public Request $request;
 
     public function __construct(private Container $container)
     {
-        //    
+        $this->request = $this->container->get(Request::class);
     }
 
     public function register(string $requestMethod, string $route, callable|array $action): self
@@ -55,9 +56,10 @@ class Router
         return $this->register('delete', $route, $action);
     }
 
-    public function resolve(string $requestMethod)
+    public function resolve()
     {
-        $route = parse_url($_SERVER['REQUEST_URI'])['path'];
+        $route = $this->request->getPath();
+        $requestMethod = $this->request->getMethod();
 
         foreach ($this->routes[$requestMethod] as $pattern => $routeData) {
             if (preg_match("#^$pattern$#", $route, $matches)) {
@@ -65,6 +67,7 @@ class Router
                 array_shift($matches);
                 
                 $params = array_combine($routeData['params'], $matches);
+                $params[] = $this->request;
 
                 $action = $routeData['action'];
 
