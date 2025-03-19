@@ -15,9 +15,19 @@ class Router
 
     public function register(string $requestMethod, string $route, callable|array $action): self
     {
-        $this->routes[$requestMethod][$route] = $action;
+        $pattern = preg_replace('/\{\w+\}/', '([^/]+)', $route);
+        $this->routes[$requestMethod][$pattern] = [
+            'action' => $action,
+            'params' => $this->getRouteParams($route)
+        ];
         
         return $this;
+    }
+
+    public function getRouteParams(string $route): array
+    {
+        preg_match_all('/\{(\w+)\}/', $route, $matches);
+        return $matches[1];
     }
 
     public function get(string $route, callable|array $action): self
@@ -48,26 +58,32 @@ class Router
     public function resolve(string $requestMethod)
     {
         $route = parse_url($_SERVER['REQUEST_URI'])['path'];
-        $action = $this->routes[$requestMethod][$route] ?? null;
 
-        if(!$action) {
-            throw new RouteNotFoundException();
-        }
+        foreach ($this->routes[$requestMethod] as $pattern => $routeData) {
+            if (preg_match("#^$pattern$#", $route, $matches)) {
+                
+                array_shift($matches);
+                
+                $params = array_combine($routeData['params'], $matches);
 
-        if(is_callable($action)) {
-            return call_user_func($action);
-        }
+                $action = $routeData['action'];
 
-        [$class, $method] = $action;
+                if (is_callable($action)) {
+                    return call_user_func_array($action, $params);
+                }
 
-        if(class_exists($class)) {
-            $class = $this->container->get($class);
+                [$class, $method] = $action;
 
-            if(method_exists($class, $method)) {
-                return call_user_func_array([$class, $method], []);
+                if (class_exists($class)) {
+                    $class = $this->container->get($class);
+
+                    if (method_exists($class, $method)) {
+                        return call_user_func_array([$class, $method], $params);
+                    }
+                }
+                throw new RouteNotFoundException();
             }
         }
-
         throw new RouteNotFoundException();
     }
 }
