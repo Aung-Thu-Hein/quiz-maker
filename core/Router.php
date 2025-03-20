@@ -6,6 +6,8 @@ use Core\Exceptions\RouteNotFoundException;
 
 class Router
 {
+    const PREFIX_ROUTE = "api/v1";
+
     private array $routes = [];
     public Request $request;
 
@@ -16,6 +18,8 @@ class Router
 
     public function register(string $requestMethod, string $route, callable|array $action): self
     {
+        $route = $this->format(self::PREFIX_ROUTE) . $this->format($route);
+
         $pattern = preg_replace('/\{\w+\}/', '([^/]+)', $route);
         $this->routes[$requestMethod][$pattern] = [
             'action' => $action,
@@ -58,7 +62,9 @@ class Router
 
     public function resolve()
     {
-        $route = $this->request->getPath();
+        $path = $this->request->getPath();
+        $route = $this->format($path);
+
         $requestMethod = $this->request->getMethod();
 
         foreach ($this->routes[$requestMethod] as $pattern => $routeData) {
@@ -66,8 +72,8 @@ class Router
                 
                 array_shift($matches);
                 
-                $params = array_combine($routeData['params'], $matches);
                 $params[] = $this->request;
+                $params = array_combine($routeData['params'], $matches);
 
                 $action = $routeData['action'];
 
@@ -88,5 +94,18 @@ class Router
             }
         }
         throw new RouteNotFoundException();
+    }
+
+    public function format(string $route): string
+    {
+        if(substr($route, 0, 1) != '/') {
+            $route = '/' . $route;
+        }
+        
+        if(substr($route, -1) == '/') {
+            $route = substr($route, 0, -1);
+        }
+
+        return $route;
     }
 }
