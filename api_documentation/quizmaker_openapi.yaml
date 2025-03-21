@@ -6,9 +6,6 @@ servers:
   - url: http://localhost:{port}/api/{version}
     variables:
       port:
-        enum:
-          - "8000"
-          - "8080"
         default: "8080"
       version:
         default: v1
@@ -24,10 +21,10 @@ components:
           type: boolean
           description: Scores of all questions in this quiz are same score or not
         questionType:
-          type: string
+          type: integer
           enum:
-          - Single Choice
-          - Multiple Choice
+          - 1 # Single Choice
+          - 2 # Multiple Choice
           description: Type of question includes in quiz
     question:
       type: object
@@ -46,8 +43,11 @@ components:
               - type: string
               - type: boolean
         solution:
-          type: array
-          description: the solution of question
+          oneOf:
+            - type: string
+              description: Solution for Single Choice question type, (`questionType 1`)
+            - type: array
+              description: Solution for Multiple Choice question type, (`questionType 2`)
           items:
             oneOf:
               - type: string
@@ -88,10 +88,10 @@ paths:
                   value:
                     - name: "Math Quiz"
                       isUsedSameScore: true
-                      questionType: "Single Choice"
+                      questionType: 1
                     - name: "Physic Quiz"
                       isUsedSameScore: false
-                      questionType: "Multiple Choice"
+                      questionType: 2
     post:
       summary: Create a quiz
       requestBody:
@@ -103,7 +103,7 @@ paths:
             example:
               name: "Math Quiz"
               isUsedSameScore: true
-              questionType: "Single Choice"
+              questionType: 1
               question:
                 body: "What is 2+2?"
                 options: ["1", "2", "3", "4", "5"]
@@ -119,7 +119,7 @@ paths:
               example:
                 name: "Math Quiz"
                 isUsedSameScore: true
-                questionType: "Single Choice"
+                questionType: 1
   /quizzes/{id}:
     get:
       summary: Get a quiz by its id
@@ -135,7 +135,7 @@ paths:
               example:
                 name: "Math Quiz"
                 isUsedSameScore: true
-                questionType: "Single Choice"
+                questionType: 1
     put:
       summary: Update a quiz by its id
       parameters:
@@ -149,7 +149,7 @@ paths:
             example:
               name: "Math Quiz Update"
               isUsedSameScore: false
-              questionType: "Multiple Choice"
+              questionType: 1
       responses:
         "200":
           description: "OK"
@@ -169,20 +169,11 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: "Physic Quiz"
-                isUsedSameScore:
-                  type: boolean
-                  example: true
-                questionType:
-                  type: string
-                  enum:
-                  - Single Choice
-                  - Multiple Choice
-                  example: "Single Choice"
+              $ref: "#/components/schemas/quiz"
+            example: 
+              name: "Physic Quiz"
+              isUsedSameScore: true
+              questionType: 1
       responses:
         "200":
           description: "OK"
