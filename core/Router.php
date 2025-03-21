@@ -2,7 +2,9 @@
 
 namespace Core;
 
+use Core\Exceptions\ContainerException;
 use Core\Exceptions\RouteNotFoundException;
+use Core\Http\Request;
 
 class Router
 {
@@ -72,9 +74,7 @@ class Router
                 
                 array_shift($matches);
                 
-                $params[] = $this->request;
                 $params = array_combine($routeData['params'], $matches);
-
                 $action = $routeData['action'];
 
                 if (is_callable($action)) {
@@ -87,13 +87,48 @@ class Router
                     $class = $this->container->get($class);
 
                     if (method_exists($class, $method)) {
-                        return call_user_func_array([$class, $method], $params);
+                        $resolvedParams = $this->resolveParameter($class, $method, $params);
+                        return call_user_func_array([$class, $method], $resolvedParams);
                     }
                 }
                 throw new RouteNotFoundException();
             }
         }
         throw new RouteNotFoundException();
+    }
+
+    public function resolveParameter(object|string $class, string $method, array $params): array
+    {
+        $reflection = new \ReflectionMethod($class, $method);
+        $parameters = $reflection->getParameters();
+
+        $resolvedParams = [...$params];
+        
+        foreach($parameters as $param){
+            $type = $param->getType();
+            $name = $param->getName();
+
+            if(!$type) {
+                throw new ContainerException(
+                    "Failed to resolve class $param, because param $name is missing type hint"
+                );
+            }
+
+            if($type instanceof \ReflectionUnionType) {
+                throw new ContainerException(
+                    "Failed to resolve class $param, because of the union type param $name"
+                );
+            }
+
+            if ($type instanceof \ReflectionNamedType && !$type->isBuiltin() && $type->getName() === Request::class) {
+                $resolvedParams[$name] = $this->request;
+            }
+
+            if($type instanceof \ReflectionNamedType && !$type->isBuiltin() && $type->getName() !== Request::class) {
+                $resolvedParams[$name] = $this->container->get($type->getName());
+            }
+        }
+        return $resolvedParams;
     }
 
     public function format(string $route): string
