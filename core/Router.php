@@ -73,7 +73,7 @@ class Router
             if (preg_match("#^$pattern$#", $route, $matches)) {
                 
                 array_shift($matches);
-                
+
                 $params = array_combine($routeData['params'], $matches);
                 $action = $routeData['action'];
 
@@ -107,18 +107,6 @@ class Router
         foreach($parameters as $param){
             $type = $param->getType();
             $name = $param->getName();
-
-            if(!$type) {
-                throw new ContainerException(
-                    "Failed to resolve class $param, because param $name is missing type hint"
-                );
-            }
-
-            if($type instanceof \ReflectionUnionType) {
-                throw new ContainerException(
-                    "Failed to resolve class $param, because of the union type param $name"
-                );
-            }
 
             if ($type instanceof \ReflectionNamedType && !$type->isBuiltin() && $type->getName() === Request::class) {
                 $resolvedParams[$name] = $this->request;
