@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Core\Http;
 
 class Request
 {
@@ -32,9 +32,14 @@ class Request
         return $this->attributes;
     }
 
-    public function addAttribute(mixed $value): void
+    public function hasAttributes(): bool
     {
-        $this->attributes[] = $value;
+        return count($this->getAttributes()) > 0;
+    }
+
+    public function addAttribute(string $key, mixed $value): void
+    {
+        $this->attributes[$key] = $value;
     }
 
     public function getPath(): string

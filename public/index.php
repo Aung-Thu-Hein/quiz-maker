@@ -4,7 +4,7 @@ use Core\App;
 use Core\Container;
 use Core\Router;
 use Core\DB;
-use Core\Request;
+use Core\Http\Request;
 use Dotenv\Dotenv;
 
 const BASE_PATH = __DIR__ . '/../';
