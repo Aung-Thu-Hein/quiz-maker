@@ -9,7 +9,7 @@ class MultipleChoiceQuestionBuilder extends QuestionBuilder
     protected array $options;
     protected array $solutions;
 
-    public function setOptionsAndSolution(array $options, mixed $solutions): self
+    public function setOptionsAndSolution(array $options, array|string $solutions): self
     {
         $this->options = $options;
 

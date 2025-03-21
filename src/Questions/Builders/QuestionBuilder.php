@@ -9,7 +9,7 @@ abstract class QuestionBuilder
     protected string $body;
     protected int $score;
 
-    abstract public function setOptionsAndSolution(array $options, mixed $solution): self;
+    abstract public function setOptionsAndSolution(array $options, array|string $solution): self;
     abstract protected function create(): Question;
 
     public function setBody(string $body)
