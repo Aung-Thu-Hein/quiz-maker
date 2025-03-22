@@ -1,15 +1,22 @@
 <?php
 
-namespace App\Quizzes\Builders;
+namespace App\Quizzes\Models\Builders;
 
 use App\Enums\QuestionType;
-use App\Quizzes\Quiz;
+use App\Quizzes\Models\Quiz;
 
 class QuizBuilder extends Quiz
 {
+    protected ?int $id = null;
     protected string $name;
     protected QuestionType $questionType;
     protected bool $isUsedSameScore = false;
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public function setName(string $name): self
     {
@@ -32,6 +39,7 @@ class QuizBuilder extends Quiz
     public function create(): Quiz
     {
         $quiz = new Quiz();
+        $quiz->id = $this->id;
         $quiz->name = $this->name;
         $quiz->questionType = $this->questionType;
         $quiz->isUsedSameScore = $this->isUsedSameScore;

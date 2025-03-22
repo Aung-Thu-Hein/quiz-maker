@@ -9,7 +9,7 @@ use PHPUnit\Framework\Attributes\Test;
 use App\Questions\Question;
 use App\Questions\MultipleChoiceQuestion;
 use App\Questions\SingleChoiceQuestion;
-use App\Quizzes\Quiz;
+use App\Quizzes\Models\Quiz;
 use App\Enums\QuestionType;
 
 class QuizTest extends TestCase

@@ -19,7 +19,7 @@ class QuizDao implements QuizDaoInterface
         return $this->db->run($query)->all();
     }
 
-    public function show(int $id): array
+    public function show(int $id): array|false
     {
         $query = 'SELECT * FROM quizzes WHERE id = :id';
         return $this->db->run($query, ['id' => $id])->find();

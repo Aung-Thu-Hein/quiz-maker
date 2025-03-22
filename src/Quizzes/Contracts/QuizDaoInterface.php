@@ -8,7 +8,7 @@ interface QuizDaoInterface
 {
     public function all(): array;
 
-    public function show(int $id): array;
+    public function show(int $id): array|false;
 
     public function create(array $data): DB;
 

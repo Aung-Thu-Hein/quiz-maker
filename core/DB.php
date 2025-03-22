@@ -45,7 +45,7 @@ class DB
         return $this;
     }
 
-    public function find(): array
+    public function find(): array|false
     {
         return $this->stmt->fetch();
     }

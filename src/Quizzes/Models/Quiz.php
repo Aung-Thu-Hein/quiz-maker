@@ -1,17 +1,29 @@
 <?php
 
-namespace App\Quizzes;
+namespace App\Quizzes\Models;
 
 use App\Enums\QuestionType;
 use App\Questions\Question;
-use App\Quizzes\Builders\QuizBuilder;
+use App\Quizzes\Models\Builders\QuizBuilder;
 
 class Quiz
 {
+    protected ?int $id = null;
     protected string $name;
     protected array $questions;
     protected bool $isUsedSameScore;
     protected QuestionType $questionType;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public function getName(): string
     {
