@@ -2,38 +2,76 @@
 
 namespace App\Quizzes\Controllers;
 
-use App\Enums\QuestionType;
 use App\Questions\Contracts\QuestionServiceInterface;
 use App\Quizzes\Contracts\QuizServiceInterface;
+use App\Traits\ApiResponse;
+use Core\Http\Request;
 
 class QuizController
 {
+    use ApiResponse;
+
     public function __construct(
         protected QuizServiceInterface $quizService, 
         protected QuestionServiceInterface $questionService
     ) {}
 
-    public function store()
+    public function index()
     {
-        //Requests from front-end
-        $requests = [
-            'quiz_name' => "Math Quiz",
-            'question_type' => QuestionType::SINGLE_CHOICE,
-            'is_used_same_score' => true,
-            'questions' => [
-                'body' => 'Single choice question 1',
-                'options' => ['1', '2', '3', '4', '5'],
-                'solution' => '4',
-                'score' => 2
-            ],
+        $quizzes = $this->quizService->getAllQuizzes();
+
+        $this->response(200, data: $quizzes);
+    }
+
+    public function store(Request $request)
+    {
+        $this->quizService->buildQuiz($request);
+        $quiz = $this->quizService->createQuiz();
+
+        $this->questionService->buildQuestion($request);
+        $question = $this->questionService->createQuestion($quiz);
+
+        $data = [
+            'name' => $quiz->getName(),
+            'isUsedSameScore' => $quiz->getIsUsedSameScore(),
+            'question' => [
+                'score' => $question->getScore()
+            ]
         ];
 
-        $this->quizService->buildQuiz($requests);
-        $quiz = $this->quizService->create();
+        $this->response(201, data: $data);
+    }
 
-        $this->questionService->buildQuestion($requests['question_type'], $requests['questions']);
-        $question = $this->questionService->create($quiz);
+    public function show(int $id)
+    {
+        $quiz = $this->quizService->getQuiz($id);
+        
+        if(!$quiz) {
+            $this->response(404);
+        }
 
-        var_dump($quiz);
+        $this->response(200, data: $quiz);
+    }
+
+    public function update(int $id, Request $request)
+    {
+        $isUpdated = $this->quizService->updateQuiz($id, $request);
+
+        if(!$isUpdated) {
+            $this->response(400);
+        }
+
+        $this->response(200, 'Successfully updated the quiz');
+    }
+
+    public function delete(int $id)
+    {
+        $isDeleted = $this->quizService->deleteQuiz($id);
+
+        if(!$isDeleted) {
+            $this->response(400);
+        }
+
+        $this->response(200, 'Successfully deleted the quiz');
     }
 }
