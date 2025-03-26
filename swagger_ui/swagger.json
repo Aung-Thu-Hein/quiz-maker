@@ -1,0 +1,345 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Quiz Maker API",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:{port}/api/{version}",
+			"variables": {
+				"port": {
+					"default": "8080"
+				},
+				"version": {
+					"default": "v1"
+				}
+			}
+		}
+	],
+	"components": {
+		"schemas": {
+			"quiz": {
+				"type": "object",
+				"properties": {
+					"name": {
+						"type": "string",
+						"description": "Name of quiz"
+					},
+					"isUsedSameScore": {
+						"type": "boolean",
+						"description": "Scores of all questions in this quiz are same score or not"
+					},
+					"questionType": {
+						"type": "integer",
+						"enum": [
+							1,
+							2
+						],
+						"description": "Type of question includes in quiz"
+					}
+				}
+			},
+			"question": {
+				"type": "object",
+				"properties": {
+					"quizId": {
+						"type": "integer",
+						"description": "Which quiz is belong to that question"
+					},
+					"body": {
+						"type": "string",
+						"description": "quesion body which includes actual question."
+					},
+					"options": {
+						"type": "array",
+						"description": "options for the associated question.",
+						"items": {
+							"oneOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "boolean"
+								}
+							]
+						}
+					},
+					"solution": {
+						"oneOf": [
+							{
+								"type": "string",
+								"description": "Solution for Single Choice question type, (`questionType 1`)"
+							},
+							{
+								"type": "array",
+								"description": "Solution for Multiple Choice question type, (`questionType 2`)"
+							}
+						],
+						"items": {
+							"oneOf": [
+								{
+									"type": "string"
+								},
+								{
+									"type": "boolean"
+								}
+							]
+						}
+					},
+					"score": {
+						"type": "number",
+						"description": "the score of question"
+					}
+				}
+			},
+			"quizWithQuestion": {
+				"allOf": [
+					{
+						"$ref": "#/components/schemas/quiz"
+					},
+					{
+						"type": "object",
+						"properties": {
+							"question": {
+								"$ref": "#/components/schemas/question"
+							}
+						}
+					}
+				]
+			}
+		},
+		"parameters": {
+			"id": {
+				"name": "id",
+				"in": "path",
+				"required": true,
+				"schema": {
+					"type": "integer",
+					"minimum": 1
+				}
+			}
+		}
+	},
+	"paths": {
+		"/quizzes": {
+			"get": {
+				"summary": "Get all quizzes",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#/components/schemas/quiz"
+									}
+								},
+								"examples": {
+									"quizzes": {
+										"value": [
+											{
+												"name": "Math Quiz",
+												"isUsedSameScore": true,
+												"questionType": 1
+											},
+											{
+												"name": "Physic Quiz",
+												"isUsedSameScore": false,
+												"questionType": 2
+											}
+										]
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"post": {
+				"summary": "Create a quiz",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/quizWithQuestion"
+							},
+							"example": {
+								"name": "Math Quiz",
+								"isUsedSameScore": true,
+								"questionType": 1,
+								"question": {
+									"body": "What is 2+2?",
+									"options": [
+										"1",
+										"2",
+										"3",
+										"4",
+										"5"
+									],
+									"solution": [
+										"4"
+									],
+									"score": 2
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/quiz"
+								},
+								"example": {
+									"name": "Math Quiz",
+									"isUsedSameScore": true,
+									"questionType": 1
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/quizzes/{id}": {
+			"get": {
+				"summary": "Get a quiz by its id",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/quiz"
+								},
+								"example": {
+									"name": "Math Quiz",
+									"isUsedSameScore": true,
+									"questionType": 1
+								}
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"summary": "Update a quiz by its id",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/quiz"
+							},
+							"example": {
+								"name": "Math Quiz Update",
+								"isUsedSameScore": false,
+								"questionType": 1
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Quiz updated successfully"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"patch": {
+				"summary": "Update specific field of quiz by its id",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/quiz"
+							},
+							"example": {
+								"name": "Physic Quiz",
+								"isUsedSameScore": true,
+								"questionType": 1
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Quiz updated successfully"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"summary": "Delete a quiz by its id",
+				"parameters": [
+					{
+						"$ref": "#/components/parameters/id"
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"message": {
+											"type": "string",
+											"example": "Quiz deleted successfully"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
