@@ -14,4 +14,10 @@ return [
         'url' => $_ENV['APP_URL'],
         'port' => $_ENV['APP_PORT']
     ],
+    'jwt' => [
+        'secret_key' => $_ENV['JWT_SECRET'],
+        'algorithm' => 'HS256',
+        'expiry_time' => 10800, // 3 hours
+        'type' => 'JWT',
+    ]
 ];

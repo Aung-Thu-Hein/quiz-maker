@@ -2,6 +2,7 @@
 
 use App\Questions\Controllers\QuestionController;
 use App\Quizzes\Controllers\QuizController;
+use App\Users\Controllers\UserController;
 
 $router->get('/', function() {
     echo "This is " .config('app')['name'];
@@ -20,3 +21,6 @@ $router->post('/quizzes/{quiz_id}/questions', [QuestionController::class, 'store
 $router->put('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'update']);
 $router->patch('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'patch']);
 $router->delete('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'delete']);
+
+$router->post('/user/register', [UserController::class, 'store']);
+$router->post('/user/login', [UserController::class, 'login']);
