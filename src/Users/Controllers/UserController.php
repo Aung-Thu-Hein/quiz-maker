@@ -22,7 +22,7 @@ class UserController
         $user = $this->userService->createUser();
 
         $token = Auth::login($user->getEmail(), $user->getPassword());
-
+        
         if(!$token) {
             $this->response(400);
         }

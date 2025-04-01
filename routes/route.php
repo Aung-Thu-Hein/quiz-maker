@@ -22,5 +22,5 @@ $router->put('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'u
 $router->patch('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'patch']);
 $router->delete('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class, 'delete']);
 
-$router->post('/user/register', [UserController::class, 'store']);
-$router->post('/user/login', [UserController::class, 'login']);
+$router->post('/users/register', [UserController::class, 'store']);
+$router->post('/users/login', [UserController::class, 'login']);

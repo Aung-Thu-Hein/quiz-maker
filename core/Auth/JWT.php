@@ -42,4 +42,32 @@ class JWT
 
         return "$header.$payload.$signature";
     }
+
+    public static function validate(string $token)
+    {
+
+        //extract token parts
+        list($header, $payload, $signature) = explode('.', $token);
+
+        //decode payload
+        $decodedPayload = self::base64UrlDecode($payload);
+        $decodedPayload = json_decode($decodedPayload, true);
+
+        //check token is expired or not 
+        if($decodedPayload['exp'] < time()) {
+            return [false, 'Token expired...'];
+        }
+
+        //compute hash value
+        $hashedSignature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
+        $hashedSignature = self::base64UrlEncode($hashedSignature);
+
+        //validate signature
+        if(!hash_equals($hashedSignature, $signature)) {
+            return [false, 'Invalid token...'];
+        }
+        
+        //valid
+        return [true, $decodedPayload];
+    }
 }

@@ -9,28 +9,27 @@ use Core\Http\Request;
 
 class UserService implements UserServiceInterface
 {
-    protected User $user;
-
     public function __construct(
-        protected UserDaoInterface $userDao
+        protected UserDaoInterface $userDao,
+        protected User $user
     ){}
 
-    public function buildUser(Request $request)
+    public function buildUser(Request $request): void
     {
         $attributes = $request->getAttributes();
 
-        $this->user->setFirstName($attributes['first_name']);
-        $this->user->setLastName($attributes['last_name'] ?? null);
+        $this->user->setFirstName($attributes['firstName']);
+        $this->user->setLastName($attributes['lastName'] ?? null);
         $this->user->setEmail($attributes['email']);
         $this->user->setPassword($attributes['password']);
     }
 
-    public function createUser()
+    public function createUser(): User
     {
         $createdUser = $this->userDao->create([
             'first_name' => $this->user->getFirstName(),
             'last_name' => $this->user->getLastName(),
-            'email' => $this->user->getLastName(),
+            'email' => $this->user->getEmail(),
             'password' => password_hash($this->user->getPassword(), PASSWORD_BCRYPT)
         ]);
 
@@ -38,7 +37,7 @@ class UserService implements UserServiceInterface
         return $this->user;
     }
 
-    public function getUserByEmail(string $email)
+    public function getUserByEmail(string $email): array|false
     {
         $user = $this->userDao->getByEmail($email);
 
@@ -49,7 +48,7 @@ class UserService implements UserServiceInterface
         return $this->map($user);
     }
 
-    public function map(array $user)
+    public function map(array $user): array
     {
         return [
             'id' => $user['id'],

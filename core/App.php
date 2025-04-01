@@ -12,6 +12,10 @@ use App\Quizzes\Contracts\QuizDaoInterface;
 use App\Quizzes\Contracts\QuizServiceInterface;
 use App\Quizzes\DAOs\QuizDao;
 use App\Quizzes\Services\QuizService;
+use App\Users\Contracts\UserDaoInterface;
+use App\Users\Contracts\UserServiceInterface;
+use App\Users\DAOs\UserDao;
+use App\Users\Services\UserService;
 
 class App
 {
@@ -23,6 +27,8 @@ class App
         $container->set(QuizDaoInterface::class, QuizDao::class);
         $container->set(QuestionServiceInterface::class, QuestionService::class);
         $container->set(QuestionDaoInterface::class, QuestionDao::class);
+        $container->set(UserServiceInterface::class, UserService::class);
+        $container->set(UserDaoInterface::class, UserDao::class);
     }
 
     public function run(): void

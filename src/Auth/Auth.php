@@ -28,9 +28,16 @@ class Auth
                 'exp' => $issuedAt + config('jwt')['expiry_time']
             ];
             
+            JWT::init();
             return JWT::token($payload);
         }
 
         return false;
+    }
+
+    public static function validate(string $token)
+    {
+        JWT::init();
+        return JWT::validate($token);
     }
 }
