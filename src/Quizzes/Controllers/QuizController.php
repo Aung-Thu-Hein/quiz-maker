@@ -2,6 +2,7 @@
 
 namespace App\Quizzes\Controllers;
 
+use App\Auth\Auth;
 use App\Questions\Contracts\QuestionServiceInterface;
 use App\Quizzes\Contracts\QuizServiceInterface;
 use App\Traits\ApiResponse;
@@ -16,8 +17,21 @@ class QuizController
         protected QuestionServiceInterface $questionService
     ) {}
 
-    public function index()
+    public function index(Request $request)
     {
+        //Validate jwt token, remove after adding middleware
+        $token = $request->getHeaders()['Authorization'] ?? null;
+        if(!$token) {
+            $this->response(401);
+        }
+
+        $token = str_replace('Bearer ', '', $token);
+        list($isValid, $message) = Auth::validate($token);
+
+        if(!$isValid) {
+            $this->response(401, message: $message);
+        }
+
         $quizzes = $this->quizService->getAllQuizzes();
 
         $this->response(200, data: $quizzes);
