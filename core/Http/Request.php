@@ -8,12 +8,14 @@ class Request
     protected string $path;
     protected string $method;
     protected array $attributes;
+    protected array $headers;
 
     public function __construct()
     {
         $this->uri = $_SERVER['REQUEST_URI'];
         $this->path = parse_url($this->uri)['path'];
         $this->method = strtolower($_SERVER['REQUEST_METHOD']);
+        $this->headers = getallheaders();
         $this->attributes = json_decode(file_get_contents('php://input'), true) ?? [];
     }
 
@@ -45,5 +47,10 @@ class Request
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    public function getHeaders(): array 
+    {
+        return $this->headers;
     }
 }
