@@ -18,5 +18,5 @@ interface QuizServiceInterface
 
     public function updateQuiz(int $id, Request $request): int|false;
 
-    public function deleteQuiz(int $id): int|false;
+    public function deleteQuiz(int $id): bool;
 }

@@ -19,10 +19,29 @@ class QuizDao implements QuizDaoInterface
         return $this->db->run($query)->all();
     }
 
-    public function show(int $id): array|false
+    public function show(int $id): array
     {
-        $query = 'SELECT * FROM quizzes WHERE id = :id';
-        return $this->db->run($query, ['id' => $id])->find();
+        $query = 'SELECT 
+            quizzes.id,
+            quizzes.name,
+            quizzes.is_used_same_score,
+            quizzes.question_type,
+            quizzes.created_at,
+            quizzes.updated_at,
+            questions.id AS question_id,
+            questions.quiz_id,
+            questions.body,
+            questions.options,
+            questions.solution,
+            questions.score,
+            questions.created_at AS question_created_at,
+            questions.updated_at AS question_updated_at
+            FROM quizzes 
+            LEFT JOIN questions 
+            ON quizzes.id = questions.quiz_id 
+            WHERE quizzes.id = :id';
+            
+        return $this->db->run($query, ['id' => $id])->all();
     }
 
     public function create(array $data): DB

@@ -43,7 +43,7 @@ class QuizController
         $quiz = $this->quizService->createQuiz();
 
         $this->questionService->buildQuestion($request);
-        $question = $this->questionService->createQuestion($quiz);
+        $question = $this->questionService->createQuestion($quiz->getId());
 
         $data = [
             'name' => $quiz->getName(),
@@ -83,7 +83,7 @@ class QuizController
         $isDeleted = $this->quizService->deleteQuiz($id);
 
         if(!$isDeleted) {
-            $this->response(400);
+            $this->response(400, 'Failed to delete!');
         }
 
         $this->response(200, 'Successfully deleted the quiz');

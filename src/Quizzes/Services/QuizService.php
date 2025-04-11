@@ -59,7 +59,7 @@ class QuizService implements QuizServiceInterface
             return false;
         }
 
-        return $this->map($quiz);
+        return $this->format($quiz);
     }
 
     public function updateQuiz(int $id, Request $request): int|false
@@ -81,7 +81,7 @@ class QuizService implements QuizServiceInterface
         return $quiz['id'];
     }
 
-    public function deleteQuiz(int $id): int|false 
+    public function deleteQuiz(int $id): bool
     {
         $quiz = $this->quizDao->show($id);
 
@@ -89,12 +89,34 @@ class QuizService implements QuizServiceInterface
             return false;
         }
 
-        $this->quizDao->delete($id);
-
-        return $quiz['id'];
+        $isDeleted = $this->quizDao->delete($id);
+        return $isDeleted;
     }
 
-    public function map(array $quiz)
+    private function format(array $rows)
+    {
+        $quiz = $this->map($rows[0]);
+
+        $questions = [];
+        foreach($rows as $row){
+            array_push($questions, [
+                'id' => $row['question_id'],
+                'body' => $row['body'],
+                'options' => json_decode($row['options'], true),
+                'solution' => json_decode($row['solution'], true),
+                'score' => $row['score'],
+                'createdAt' => $row['question_created_at'],
+                'updatedAt' => $row['question_updated_at']
+            ]);
+        }
+
+        return [
+            'quiz' => $quiz,
+            'question' => $questions
+        ];
+    }
+
+    private function map(array $quiz)
     {
         return [
             'id' => $quiz['id'],
