@@ -19,10 +19,12 @@ class QuestionDao implements QuestionDaoInterface
         return $this->db->run($query, ['quiz_id' => $quiz_id])->all();
     }
 
-    public function show(int $id): array
+    public function show(int $id, int $quiz_id): false|array
     {
-        $query = 'SELECT * FROM questions WHERE id = :id';
-        return $this->db->run($query, ['id' => $id])->find();
+        $query = 'SELECT * FROM questions WHERE id = :id AND quiz_id = :quiz_id';
+        return $this->db->run($query, [
+            'id' => $id, 'quiz_id' => $quiz_id
+        ])->find();
     }
 
     public function create(array $data): DB
@@ -38,7 +40,7 @@ class QuestionDao implements QuestionDaoInterface
         $placeholders = [];
         $values = [];
 
-        foreach($data as $index => $question){
+        foreach($data as $question){
             $placeholders[] = "(?, ?, ?, ?, ?)";
 
             //store in sequential order
@@ -53,10 +55,11 @@ class QuestionDao implements QuestionDaoInterface
         return $this->db->run($query, $values);
     }
 
-    public function update(int $id, array $data): DB
+    public function update(int $id, int $quiz_id, array $data): DB
     {
         $query = 'UPDATE questions SET quiz_id = :quiz_id, body = :body, options = :options, solution = :solution, score = :score WHERE id = :id';
         $data['id'] = $id;
+        $data['quiz_id'] = $quiz_id;
         return $this->db->run($query, $data);
     }
 
