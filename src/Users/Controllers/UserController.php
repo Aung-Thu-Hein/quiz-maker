@@ -4,14 +4,14 @@ namespace App\Users\Controllers;
 
 use App\Auth\Auth;
 use App\Traits\ApiResponse;
-use App\Users\Services\UserService;
+use App\Users\Contracts\UserServiceInterface;
 use Core\Http\Request;
 
 class UserController
 {
     use ApiResponse;
 
-    public function __construct(protected UserService $userService)
+    public function __construct(protected UserServiceInterface $userService)
     {
         //
     }
@@ -54,5 +54,40 @@ class UserController
 
         $user['token'] = $token;
         $this->response(201, data: $user);
+    }
+
+    public function logout()
+    {
+        $refreshToken = $_COOKIE['refresh_token'];
+
+        if(!isset($refreshToken)) {
+            $this->response(403, message: "No refresh token is found...");
+        }
+
+        $isLogout = Auth::logout($refreshToken);
+
+        if(!$isLogout) {
+            $this->response(400, message: "Something was wrong, try again...");
+        }
+
+        $this->response(200);
+    }
+
+    public function refresh()
+    {
+        $refreshToken = $_COOKIE['refresh_token'];
+
+        if(!isset($refreshToken)) {
+            $this->response(403, message: "No refresh token is found...");
+        }
+
+        list($isValid, $data) = Auth::validateRefreshToken($refreshToken);
+        if(!$isValid) {
+            $this->response(401, message: $data);
+        }
+
+        $newToken = Auth::refreshToken($data);
+
+        $this->response(200, data: ['token' => $newToken]);
     }
 }

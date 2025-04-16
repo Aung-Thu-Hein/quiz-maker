@@ -7,13 +7,15 @@ class JWT
     private static string $secretKey;
     private static string $algorithm;
     private static string $type;
+    private static string $refreshSecretKey;
 
-    public static function init()
+    private static function init()
     {
         $jwt = config('jwt');
         self::$secretKey = $jwt['secret_key'];
         self::$algorithm = $jwt['algorithm'];
         self::$type = $jwt['type'];
+        self::$refreshSecretKey = $jwt['refresh_secret_key'];
     }
 
     private static function base64UrlEncode(string $data): string
@@ -26,32 +28,71 @@ class JWT
         return base64_decode(str_replace(['-', '_'], ['+', '/'], $data));
     }
 
+    private static function encodeHeader(): string
+    {
+        $header = json_encode(['typ' => self::$type, 'alg' => self::$algorithm]);
+        return self::base64UrlEncode($header);
+    }
+
+    private static function encodePayload(array $payload): string
+    {
+        $payload = json_encode($payload);
+        return self::base64UrlEncode($payload);
+    }
+
+    private static function encodeSignature(string $header, string $payload, string $key): string
+    {
+        $signature = hash_hmac('sha256', "$header.$payload", $key, true);
+        return self::base64UrlEncode($signature);
+    }
+
+    private static function decodePayload(string $payload): array
+    {
+        $decodedPayload = self::base64UrlDecode($payload);
+        return json_decode($decodedPayload, true);
+    }
+
     public static function token(array $payload): string
     {
+        self::init();
+
         //encode header
-        $header = json_encode(['typ' => self::$type, 'alg' => self::$algorithm]);
-        $header = self::base64UrlEncode($header);
+        $header = self::encodeHeader(); 
 
         //encode payload
-        $payload = json_encode($payload);
-        $payload = self::base64UrlEncode($payload);
+        $payload = self::encodePayload($payload);
 
         //encode signature
-        $signature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
-        $signature = self::base64UrlEncode($signature);
+        $signature = self::encodeSignature($header, $payload, self::$secretKey);
 
         return "$header.$payload.$signature";
     }
 
-    public static function validate(string $token)
+    public static function refreshToken(array $payload): string
     {
+        self::init();
+
+        //encode header
+        $header = self::encodeHeader(); 
+
+        //encode payload
+        $payload = self::encodePayload($payload);
+
+        //encode signature
+        $signature = self::encodeSignature($header, $payload, self::$refreshSecretKey);
+
+        return "$header.$payload.$signature";
+    }
+
+    public static function validateToken(string $token): array
+    {
+        self::init();
 
         //extract token parts
         list($header, $payload, $signature) = explode('.', $token);
 
         //decode payload
-        $decodedPayload = self::base64UrlDecode($payload);
-        $decodedPayload = json_decode($decodedPayload, true);
+        $decodedPayload = self::decodePayload($payload);
 
         //check token is expired or not 
         if($decodedPayload['exp'] < time()) {
@@ -59,8 +100,34 @@ class JWT
         }
 
         //compute hash value
-        $hashedSignature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
-        $hashedSignature = self::base64UrlEncode($hashedSignature);
+        $hashedSignature = self::encodeSignature($header, $payload, self::$secretKey);
+
+        //validate signature
+        if(!hash_equals($hashedSignature, $signature)) {
+            return [false, 'Invalid token...'];
+        }
+        
+        //valid
+        return [true, $decodedPayload];
+    }
+
+    public static function validateRefreshToken(string $token): array
+    {
+        self::init();
+
+        //extract token parts
+        list($header, $payload, $signature) = explode('.', $token);
+
+        //decode payload
+        $decodedPayload = self::decodePayload($payload);
+
+        //check token is expired or not 
+        if($decodedPayload['exp'] < time()) {
+            return [false, 'Refresh token has expired...'];
+        }
+
+        //compute hash value
+        $hashedSignature = self::encodeSignature($header, $payload, self::$refreshSecretKey);
 
         //validate signature
         if(!hash_equals($hashedSignature, $signature)) {

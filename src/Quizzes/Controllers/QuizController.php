@@ -26,7 +26,7 @@ class QuizController
         }
 
         $token = str_replace('Bearer ', '', $token);
-        list($isValid, $message) = Auth::validate($token);
+        list($isValid, $message) = Auth::validateToken($token);
 
         if(!$isValid) {
             $this->response(401, message: $message);

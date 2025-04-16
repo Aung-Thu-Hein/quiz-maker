@@ -21,3 +21,5 @@ $router->delete('/quizzes/{quiz_id}/questions/{id}', [QuestionController::class,
 
 $router->post('/users/register', [UserController::class, 'store']);
 $router->post('/users/login', [UserController::class, 'login']);
+$router->post('/users/logout', [UserController::class, 'logout']);
+$router->post('/auth/refresh', [UserController::class, 'refresh']);

@@ -23,4 +23,18 @@ class UserDao implements UserDaoInterface
         $query = 'SELECT * FROM users WHERE email = :email';
         return $this->db->run($query, ['email' => $email])->find();
     }
+
+    public function createRefreshToken(array $data): DB
+    {
+        $query = 'INSERT INTO jwt_refresh_token (user_id, refresh_token, expires_at) VALUES(:user_id, :refresh_token, expires_at)';
+        return $this->db->run($query, $data);
+    }
+
+    public function deleteRefreshToken(string $token): bool
+    {
+        $query = 'DELETE FROM jwt_refresh_token WHERE refresh_token = :token';
+        $result = $this->db->delete($query, ['refresh_token' => $token]);
+
+        return $result > 0;
+    }
 }
