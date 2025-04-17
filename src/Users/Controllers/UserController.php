@@ -58,7 +58,7 @@ class UserController
 
     public function logout()
     {
-        $refreshToken = $_COOKIE['refresh_token'];
+        $refreshToken = $_COOKIE['refresh_token'] ?? null;
 
         if(!isset($refreshToken)) {
             $this->response(403, message: "No refresh token is found...");
@@ -75,7 +75,7 @@ class UserController
 
     public function refresh()
     {
-        $refreshToken = $_COOKIE['refresh_token'];
+        $refreshToken = $_COOKIE['refresh_token'] ?? null;
 
         if(!isset($refreshToken)) {
             $this->response(403, message: "No refresh token is found...");

@@ -26,13 +26,13 @@ class UserDao implements UserDaoInterface
 
     public function createRefreshToken(array $data): DB
     {
-        $query = 'INSERT INTO jwt_refresh_token (user_id, refresh_token, expires_at) VALUES(:user_id, :refresh_token, expires_at)';
+        $query = 'INSERT INTO jwt_refresh_tokens (user_id, refresh_token, expires_at) VALUES(:user_id, :refresh_token, :expires_at)';
         return $this->db->run($query, $data);
     }
 
     public function deleteRefreshToken(string $token): bool
     {
-        $query = 'DELETE FROM jwt_refresh_token WHERE refresh_token = :token';
+        $query = 'DELETE FROM jwt_refresh_tokens WHERE refresh_token = :refresh_token';
         $result = $this->db->delete($query, ['refresh_token' => $token]);
 
         return $result > 0;

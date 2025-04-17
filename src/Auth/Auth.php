@@ -83,7 +83,7 @@ class Auth
             $userDao->createRefreshToken([
                 'user_id' => $user['id'],
                 'refresh_token' => $refreshToken,
-                'expires_at' => $refreshPayload['exp']
+                'expires_at' => date('Y-m-d H:i:s', $refreshPayload['exp'])
             ]);
 
             return JWT::token([...$payload, 'exp' => $issuedAt + config('jwt')['expiry_time']]);
