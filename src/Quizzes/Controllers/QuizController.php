@@ -3,6 +3,7 @@
 namespace App\Quizzes\Controllers;
 
 use App\Auth\Auth;
+use App\Enums\QuestionType;
 use App\Questions\Contracts\QuestionServiceInterface;
 use App\Quizzes\Contracts\QuizServiceInterface;
 use App\Traits\ApiResponse;
@@ -48,9 +49,7 @@ class QuizController
         $data = [
             'name' => $quiz->getName(),
             'isUsedSameScore' => $quiz->getIsUsedSameScore(),
-            'question' => [
-                'score' => $question->getScore()
-            ]
+            'questionType' => QuestionType::getLabel($quiz->getQuestionType()->value)
         ];
 
         $this->response(201, data: $data);
@@ -72,7 +71,7 @@ class QuizController
         $isUpdated = $this->quizService->updateQuiz($id, $request);
 
         if(!$isUpdated) {
-            $this->response(400);
+            $this->response(404);
         }
 
         $this->response(200, 'Successfully updated the quiz');
@@ -83,7 +82,7 @@ class QuizController
         $isDeleted = $this->quizService->deleteQuiz($id);
 
         if(!$isDeleted) {
-            $this->response(400, 'Failed to delete!');
+            $this->response(404);
         }
 
         $this->response(200, 'Successfully deleted the quiz');

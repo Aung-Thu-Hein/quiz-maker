@@ -112,7 +112,7 @@ class QuizService implements QuizServiceInterface
 
         return [
             'quiz' => $quiz,
-            'question' => $questions
+            'questions' => $questions
         ];
     }
 
