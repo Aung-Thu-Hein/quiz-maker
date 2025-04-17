@@ -14,6 +14,9 @@ components:
     quiz:
       type: object
       properties:
+        id:
+          type: integer
+          description: Unique identifier of a quiz 
         name:
           type: string
           description: Name of quiz
@@ -26,9 +29,18 @@ components:
           - 1 # Single Choice
           - 2 # Multiple Choice
           description: Type of question includes in quiz
+        createdAt:
+          type: string
+          description: Datetime of created quiz
+        updatedAt:
+          type: string
+          description: Datetime when a quiz is updated 
     question:
       type: object
       properties:
+        id:
+          type: integer
+          description: Unique identifier of a question
         quizId:
           type: integer
           description: Which quiz is belong to that question
@@ -55,6 +67,12 @@ components:
         score:
           type: number
           description: the score of question
+        createdAt:
+          type: string
+          description: Datetime of created question
+        updatedAt:
+          type: string
+          description: Datetime when a question is updated 
     quizWithQuestion:
       allOf:
         - $ref: "#/components/schemas/quiz"
@@ -62,14 +80,78 @@ components:
           properties:
             question:
               $ref: "#/components/schemas/question"
+    errorResponse:
+      type: object
+      properties:
+        status: 
+          type: integer
+          description: Http status code
+        message:
+          type: string
+          description: Error message
+      required: 
+        - status
+        - message
   parameters:
-    id:
+    quizId:
       name: id
       in: path
       required: true
       schema:
         type: integer
         minimum: 1
+    quizIdInQuestion:
+      name: quiz_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+    questionId:
+      name: id 
+      in: path
+      required: true
+      schema:
+        type: integer
+        minimum: 1
+  responses:
+    notFound:
+      description: Resource not found error
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/errorResponse"
+    unauthorize:
+      description: Unauthorized Error 
+      content:
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/errorResponse"
+    unprocessableContent:
+      description: Unprocessable content error
+      content: 
+        application/json:
+          schema:
+            type: object
+            properties: 
+              status: 
+                type: integer
+                description: Http status code
+              message:
+                type: string
+                description: Error message
+              errors: 
+                type: array
+                description: Error messages for related fields with key and values pairs
+                items: 
+                  type: object
+                  properties:
+                    fieldName: 
+                      type: string
+                      description: Name of input field 
+                    errorMessage:
+                      type: string 
+                      description: Error message
 paths:
   /quizzes:
     get:
@@ -80,18 +162,36 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/quiz"
-              examples:
-                quizzes:
-                  value:
-                    - name: "Math Quiz"
-                      isUsedSameScore: true
-                      questionType: 1
-                    - name: "Physic Quiz"
-                      isUsedSameScore: false
-                      questionType: 2
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Http status code (200)
+                  message:
+                    type: string
+                    description: Success message
+                  data: 
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/quiz"
+              example:
+                status: 200
+                message: "OK"
+                data:
+                  - id: 13
+                    name: "Math Quiz"
+                    isUsedSameScore: true
+                    questionType: 1
+                    createdAt: "2025-03-11 02:45:50"
+                    updatedAt: "2025-03-11 15:45:47"
+                  - id: 14
+                    name: "Physic Quiz"
+                    isUsedSameScore: false
+                    questionType: 2
+                    createdAt: "2025-03-11 02:45:50"
+                    updatedAt: "2025-03-11 15:45:47"
+        "401":
+          $ref: "#/components/responses/unauthroized"
     post:
       summary: Create a quiz
       requestBody:
@@ -115,31 +215,106 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/quiz"
+                type: object
+                properties:
+                  status: 
+                    type: integer
+                    description: Https status code (201)
+                  message:
+                    type: string
+                    description: Success message
+                  data:
+                    $ref: "#/components/schemas/quiz"
               example:
-                name: "Math Quiz"
-                isUsedSameScore: true
-                questionType: 1
+                status: 201
+                message: "Created"
+                data:
+                  name: "Math Quiz"
+                  isUsedSameScore: true
+                  questionType: "Single Choice"
+        "422":
+          $ref: "#/components/responses/unprocessableContent"
+          example:
+            status: 422
+            message: Unprocessable Content 
+            errors: 
+              - fieldName: solution
+                errorMessage: Solution must be included in options
+              - fieldName: score 
+                errorMessage: Score must be integer type 
+        "401":
+          $ref: "#/components/responses/unauthorized"
   /quizzes/{id}:
     get:
       summary: Get a quiz by its id
       parameters:
-        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/quizId"
       responses:
         "200":
           description: "OK"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/quiz"
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    description: Http status code (200)
+                  message: 
+                    type: string
+                    description: Success message
+                  data:
+                    type: object 
+                    properties:
+                      quiz:
+                        $ref: "#/components/schemas/quiz"
+                      questions:
+                        type: array 
+                        items:
+                          $ref: "#/components/schemas/question"
               example:
-                name: "Math Quiz"
-                isUsedSameScore: true
-                questionType: 1
+                status: 200
+                message: "OK"
+                data:
+                  quiz:
+                    name: "Math Quiz"
+                    isUsedSameScore: true
+                    questionType: "Single Choice"
+                    createdAt: "2025-03-11 02:45:50"
+                    updatedAt: "2025-03-11 15:45:47"
+                  questions:
+                    - id: "7"
+                      body: "Which number is greatest number?"
+                      options: 
+                        - "11"
+                        - "22"
+                        - "33"
+                        - "44"
+                        - "55"
+                      solution: "55"
+                      score: "3.00"
+                      createdAt: "2025-03-11 02:45:50"
+                      updatedAt: "2025-04-11 08:26:38"
+                    - id: "9"
+                      body: "Single choice question 1"
+                      options: 
+                        - "1"
+                        - "2"
+                        - "3"
+                        - "4"
+                        - "5"
+                      solution: "4"
+                      score: "2.00"
+                      createdAt: "2025-03-11 04:58:49"
+                      updatedAt: "2025-04-05 07:18:53"
+        "404":
+          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthorized"
     put:
       summary: Update a quiz by its id
       parameters:
-        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/quizId"
       requestBody:
         required: true
         content:
@@ -158,37 +333,22 @@ paths:
               schema:
                 type: object
                 properties:
+                  status:
+                    type: integer
+                    description: Http status code (200)
                   message:
                     type: string
-                    example: "Quiz updated successfully"
-    patch:
-      summary: Update specific field of quiz by its id
-      parameters:
-        - $ref: "#/components/parameters/id"
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/quiz"
-            example: 
-              name: "Physic Quiz"
-              isUsedSameScore: true
-              questionType: 1
-      responses:
-        "200":
-          description: "OK"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Quiz updated successfully"
+                    description: Success message
+        "401":
+          $ref: "#/components/responses/unauthorized"
+        "404": 
+          $ref: "#/components/responses/notFound"
+        "422":
+          $ref: "#/components/responses/unprocessableContent"
     delete:
       summary: Delete a quiz by its id
       parameters:
-        - $ref: "#/components/parameters/id"
+        - $ref: "#/components/parameters/quizId"
       responses:
         "200":
           description: "OK"
@@ -197,7 +357,13 @@ paths:
               schema:
                 type: object
                 properties:
+                  status: 
+                    type: integer
+                    description: Http status code (200)
                   message:
                     type: string
-                    example: "Quiz deleted successfully"
-        
+                    description: Success message
+        "404":
+          $ref: "#/components/responses/notFound"
+        "401":
+          $ref: "#/components/responses/unauthorized"
