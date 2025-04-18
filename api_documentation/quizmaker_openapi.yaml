@@ -10,6 +10,12 @@ servers:
       version:
         default: v1
 components:
+  securitySchemes:
+    bearerHttpAuthentication:
+      description: Bearer token using a JWT
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     quiz:
       type: object
