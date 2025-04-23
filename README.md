@@ -28,10 +28,10 @@ The **src** folder contains application logics and data modeling classes (Quiz, 
 - **DAO layer** which is responsible for performing query operation
 - **Model classes** which are built by using Builder, Factories pattern (Quiz, Question and User)
 
-The **migration** folder contains sql files which is responsible for database migration
-The **tests** folder contain **unit testing** for model classes Question and Quiz
-The **.github** folder contains **CI/CD** operation using **GitHub Action**
-The **swagger_ui** folder for visualization and interacting with the API’s resources without having any of the implementation logic in place
+The **migration** folder contains sql files which is responsible for database migration.  
+The **tests** folder contain **unit testing** for model classes Question and Quiz.  
+The **.github** folder contains **CI/CD** operation using **GitHub Action**.  
+The **swagger_ui** folder for visualization and interacting with the API’s resources without having any of the implementation logic in place.  
 
 ## Running the Project with Docker
 
